@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clip-Browser | syntcs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link rel="shortcut icon" href="https://i.ibb.co/N2W6MnWd/icon.png">
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: url('https://raw.githubusercontent.com/Syntcs/syntcs.github.io/refs/heads/main/BGB.jpg') center/cover no-repeat;
+            font-family: 'SF Mono', monospace;
+            overflow: hidden;
+        }
+
+        #taskbar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            justify-content: space-between;
+        }
+
+        .window {
+            position: absolute;
+            width: 80%;
+            height: 85vh;
+            background: #2a2a2a;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            left: 10%;
+            top: 5%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .titlebar {
+            padding: 10px;
+            background: #333;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+        }
+
+        .close { background: #ff5f57; }
+        .minimize { background: #febc2e; }
+        .maximize { background: #28c940; }
+
+        .browser-content {
+            padding: 20px;
+            color: #fff;
+            overflow-y: auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .filter-section {
+            width: 50%;
+            margin: 10px 0;
+        }
+
+        #tagFilter {
+            width: 100%;
+            padding: 10px;
+            background: #333;
+            border: none;
+            color: #fff;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .video-gallery {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-anchor: none;
+        }
+
+        .video-container {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+
+        .video-container iframe {
+            width: 65%;
+            height: 300px;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .video-info {
+            width: 32%;
+            padding: 10px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 120px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .video-info h4 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .video-info p {
+            margin: 0;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .video-tags {
+            margin: 10px 0;
+        }
+
+        .tag {
+            display: inline-block;
+            background-color: #444;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .video-stats {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .taskbar-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .taskbar-tab {
+            padding: 5px 10px;
+            background: #333;
+            color: #fff;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .active-tab {
+            background: #444;
+        }
+
+        #clock {
+            position: absolute;
+            right: 50px;
+            top: 10px;
+            color: white;
+            font-size: 12px;
+        }
+
+        .spacer {
+            height: 20px;
+            width: 100%;
+            color: #2a2a2a;
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <div class="titlebar">
+            <div style="color: white;">Clip-Browser</div>
+            <div class="window-controls">
+                <button class="control-button close"></button>
+                <button class="control-button minimize"></button>
+                <button class="control-button maximize"></button>
+            </div>
+        </div>
+        <div class="browser-content">
+            <div class="filter-section">
+                <input type="text" id="tagFilter" placeholder="Filter by tag...">
+            </div>
+            <div class="video-gallery">
+
+                <div class="video-container">
+                    <iframe width="100%" height="300" src="https://www.youtube.com/embed/D-KHM4HNbgg" frameborder="0" allowfullscreen></iframe>
+                    <div class="video-info">
+                        <div class="video-thumbnail" style="background-image: url('https://img.youtube.com/vi/D-KHM4HNbgg/0.jpg');"></div>
+                        <h4>Warzone nuke defuse</h4>
+                        <p>Published on 2024-02-27</p>
+                        <div class="video-tags">
+                            <span class="tag">Warzone</span>
+                            <span class="tag">Nuke defuse</span>
+                            <span class="tag">Gaming</span>
+                        </div>
+                        <div class="video-stats">
+                            <span>0 views</span>
+                            <span>0 likes</span>
+                        </div>
+                    </div>
+                </div>
+   
+                <div class="spacer">.</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="taskbar">
+        <div class="taskbar-tabs">
+            <div class="taskbar-tab" style="background: none; padding: 0; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center;">
+                <img src="https://i.ibb.co/N2W6MnWd/icon.png" style="width: 20px; height: 20px;" alt="syntcs.com Icon">
+            </div>
+            <a href="https://syntcs.com" class="taskbar-tab" target="_blank">
+                <i class="fas fa-terminal" style="margin-right: 5px;"></i> Terminal | syntcs.com
+            </a>
+            <div class="taskbar-tab">
+                <i class="fa-solid fa-globe" style="margin-right: 5px;"></i> Clip-Browser
+            </div>
+        </div>
+        <div id="clock"></div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('clock').innerText = `${hours}:${minutes}:${seconds}`;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        document.getElementById('tagFilter').addEventListener('input', function() {
+            var filterValue = this.value.toLowerCase();
+            var videos = document.querySelectorAll('.video-container');
+            
+            videos.forEach(function(video) {
+                var tags = video.querySelectorAll('.tag');
+                var showVideo = false;
+                
+                tags.forEach(function(tag) {
+                    if (tag.textContent.toLowerCase().includes(filterValue)) {
+                        showVideo = true;
+                    }
+                });
+                
+                video.style.display = showVideo ? 'flex' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>
