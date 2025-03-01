@@ -109,7 +109,7 @@
 
         .video-container iframe {
             width: 65%;
-            height: 600px;
+            height: 300px;
             border: none;
             border-radius: 8px;
         }
@@ -214,45 +214,8 @@
             <div class="filter-section">
                 <input type="text" id="tagFilter" placeholder="Filter by tag...">
             </div>
-            <div class="video-gallery">
-
-                <div class="video-container">
-                    <iframe width="100%" height="300" src="https://www.youtube.com/embed/dwcv_QRej9k" frameborder="0" allowfullscreen></iframe>
-                    <div class="video-info">
-                        <div class="video-thumbnail" style="background-image: url('https://img.youtube.com/vi/dwcv_QRej9k/0.jpg');"></div>
-                        <h4>MAAWS artillery</h4>
-                        <p>Published on 25-02-26</p>
-                        <div class="video-tags">
-                            <span class="tag">arma3</span>
-                            <span class="tag">rocket</span>
-                            <span class="tag">gaming</span>
-                        </div>
-                        <div class="video-stats">
-                            <span>0 views</span>
-                            <span>0 likes</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="video-container">
-                    <iframe width="100%" height="300" src="https://www.youtube.com/embed/D-KHM4HNbgg" frameborder="0" allowfullscreen></iframe>
-                    <div class="video-info">
-                        <div class="video-thumbnail" style="background-image: url('https://img.youtube.com/vi/D-KHM4HNbgg/0.jpg');"></div>
-                        <h4>Warzone nuke defuse</h4>
-                        <p>Published on 2024-02-27</p>
-                        <div class="video-tags">
-                            <span class="tag">Warzone</span>
-                            <span class="tag">Nuke defuse</span>
-                            <span class="tag">Gaming</span>
-                        </div>
-                        <div class="video-stats">
-                            <span>0 views</span>
-                            <span>0 likes</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="spacer">.</div>
+            <div class="video-gallery" id="videoGallery">
+                <!-- Hier werden die Clips dynamisch hinzugefügt -->
             </div>
         </div>
     </div>
@@ -280,7 +243,6 @@
             const seconds = now.getSeconds().toString().padStart(2, '0');
             document.getElementById('clock').innerText = `${hours}:${minutes}:${seconds}`;
         }
-
         updateClock();
         setInterval(updateClock, 1000);
 
@@ -301,6 +263,69 @@
                 video.style.display = showVideo ? 'flex' : 'none';
             });
         });
+
+        fetch('clips.json')
+            .then(response => response.json())
+            .then(data => {
+                const videoGallery = document.getElementById('videoGallery');
+
+                data.forEach(clip => {
+                    var newClip = document.createElement('div');
+                    newClip.className = 'video-container';
+
+                    var iframe = document.createElement('iframe');
+                    iframe.src = 'https://www.youtube.com/embed/' + getYoutubeVideoId(clip.youtubeLink);
+                    iframe.width = '65%';
+                    iframe.height = '300';
+                    iframe.frameBorder = '0';
+                    iframe.allowFullScreen = true;
+
+                    var videoInfo = document.createElement('div');
+                    videoInfo.className = 'video-info';
+
+                    var thumbnail = document.createElement('div');
+                    thumbnail.className = 'video-thumbnail';
+                    thumbnail.style.backgroundImage = `url(https://img.youtube.com/vi/${getYoutubeVideoId(clip.youtubeLink)}/0.jpg)`;
+
+                    var videoTitle = document.createElement('h4');
+                    videoTitle.textContent = clip.title;
+
+                    var videoDescription = document.createElement('p');
+                    videoDescription.textContent = clip.description;
+
+                    var videoTags = document.createElement('div');
+                    videoTags.className = 'video-tags';
+                    clip.tags.forEach(tag => {
+                        var tagSpan = document.createElement('span');
+                        tagSpan.className = 'tag';
+                        tagSpan.textContent = tag;
+                        videoTags.appendChild(tagSpan);
+                    });
+
+                    var videoStats = document.createElement('div');
+                    videoStats.className = 'video-stats';
+                    videoStats.innerHTML = '<span>0 views</span><span>0 likes</span>';
+
+                    videoInfo.appendChild(thumbnail);
+                    videoInfo.appendChild(videoTitle);
+                    videoInfo.appendChild(videoDescription);
+                    videoInfo.appendChild(videoTags);
+                    videoInfo.appendChild(videoStats);
+
+                    newClip.appendChild(iframe);
+                    newClip.appendChild(videoInfo);
+
+                    videoGallery.appendChild(newClip);
+                });
+            })
+            .catch(error => console.error('Fehler beim Laden der Daten:', error));
+
+        // Funktion, um die Video-ID aus einem YouTube-Link zu extrahieren
+        function getYoutubeVideoId(url) {
+            var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+            var match = url.match(regExp);
+            return (match && match[7].length == 11) ? match[7] : false;
+        }
     </script>
 </body>
 </html>
