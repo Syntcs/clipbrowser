@@ -2,330 +2,437 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Clip-Browser | syntcs</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
-    <link rel="shortcut icon" href="https://i.ibb.co/N2W6MnWd/icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clip Browser</title>
     <style>
-        body {
+        /* Base styles */
+        * {
             margin: 0;
-            height: 100vh;
-            background: url('https://raw.githubusercontent.com/Syntcs/syntcs.github.io/refs/heads/main/BGB.jpg') center/cover no-repeat;
-            font-family: 'SF Mono', monospace;
-            overflow: hidden;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
-        #taskbar {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            height: 40px;
-            background: rgba(0,0,0,0.8);
+        body {
+            background-color: #0a0a0f;
+            color: white;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        /* Header styles */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #ffffff, #a8a8a8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a8a8a8;
+            margin-bottom: 2rem;
+        }
+
+        /* Search and filter */
+        .controls {
+            max-width: 1200px;
+            margin: 0 auto 2rem auto;
             display: flex;
-            align-items: center;
-            padding: 0 20px;
-            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
-        .window {
+        .search-container {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            padding-left: 2.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(30, 30, 40, 0.4);
+            color: white;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-icon {
             position: absolute;
-            width: 80%;
-            height: 85vh;
-            background: #2a2a2a;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-            left: 10%;
-            top: 5%;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a8a8a8;
         }
 
-        .titlebar {
-            padding: 10px;
-            background: #333;
-            border-radius: 12px 12px 0 0;
+        .filter-container {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
-        .window-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .control-button {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: none;
+        .filter-btn {
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(30, 30, 40, 0.4);
+            color: #a8a8a8;
+            font-size: 0.9rem;
             cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
         }
 
-        .close { background: #ff5f57; }
-        .minimize { background: #febc2e; }
-        .maximize { background: #28c940; }
-
-        .browser-content {
-            padding: 20px;
-            color: #fff;
-            overflow-y: auto;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .filter-btn:hover {
+            background-color: rgba(40, 40, 50, 0.6);
+            color: white;
         }
 
-        .filter-section {
-            width: 50%;
-            margin: 10px 0;
+        .filter-btn.active {
+            background: linear-gradient(90deg, 
+                rgba(255, 0, 255, 0.3), 
+                rgba(0, 255, 255, 0.3));
+            color: white;
+            border-color: transparent;
         }
 
-        #tagFilter {
-            width: 100%;
-            padding: 10px;
-            background: #333;
-            border: none;
-            color: #fff;
-            border-radius: 10px;
-            box-sizing: border-box;
-            font-size: 16px;
+        /* Clips container */
+        .clips-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .video-gallery {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            overflow-anchor: none;
+        /* Clip card */
+        .clip-card {
+            position: relative;
+            background-color: rgba(30, 30, 40, 0.4);
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
+        .clip-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Glow effect */
+        .clip-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                rgba(255, 0, 255, 0.7), 
+                rgba(0, 255, 255, 0.7), 
+                rgba(255, 0, 255, 0.7));
+            border-radius: 12px 12px 0 0;
+            z-index: 2;
+        }
+
+        .clip-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                circle at center,
+                rgba(255, 0, 255, 0.1) 0%,
+                rgba(0, 255, 255, 0.1) 25%,
+                transparent 70%
+            );
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+
+        .clip-card:hover::after {
+            opacity: 0.5;
+        }
+
+        /* Video container */
         .video-container {
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            box-sizing: border-box;
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
         }
 
         .video-container iframe {
-            width: 65%;
-            height: 600px;
-            border: none;
-            border-radius: 8px;
-        }
-
-        .video-info {
-            width: 32%;
-            padding: 10px;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .video-thumbnail {
-            width: 100%;
-            height: 120px;
-            background-size: cover;
-            background-position: center;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .video-info h4 {
-            margin: 0 0 10px 0;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .video-info p {
-            margin: 0;
-            font-size: 14px;
-            color: #aaa;
-        }
-
-        .video-tags {
-            margin: 10px 0;
-        }
-
-        .tag {
-            display: inline-block;
-            background-color: #444;
-            color: #fff;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            margin-right: 5px;
-            margin-bottom: 5px;
-        }
-
-        .video-stats {
-            margin-top: auto;
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #aaa;
-        }
-
-        .taskbar-tabs {
-            display: flex;
-            gap: 10px;
-        }
-
-        .taskbar-tab {
-            padding: 5px 10px;
-            background: #333;
-            color: #fff;
-            border-radius: 5px 5px 0 0;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .active-tab {
-            background: #444;
-        }
-
-        #clock {
             position: absolute;
-            right: 50px;
-            top: 10px;
-            color: white;
-            font-size: 12px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
-        .spacer {
-            height: 20px;
-            width: 100%;
-            color: #2a2a2a;
+        /* Clip content */
+        .clip-content {
+            padding: 1.5rem;
+        }
+
+        .clip-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .clip-description {
+            color: #a8a8a8;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .clip-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .clip-tag {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #d0d0d0;
+        }
+
+        /* Loading and error states */
+        .loading, .error, .no-results {
+            text-align: center;
+            padding: 3rem;
+            grid-column: 1 / -1;
+            color: #a8a8a8;
+        }
+
+        .error {
+            color: #ff6b6b;
+            background-color: rgba(255, 107, 107, 0.1);
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .clips-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="window">
-        <div class="titlebar">
-            <div style="color: white;">Clip-Browser</div>
-            <div class="window-controls">
-                <button class="control-button close"></button>
-                <button class="control-button minimize"></button>
-                <button class="control-button maximize"></button>
-            </div>
+    <header>
+        <h1>Clip Browser</h1>
+        <p class="subtitle">Browse and watch your favorite clips</p>
+    </header>
+
+    <div class="controls">
+        <div class="search-container">
+            <input type="text" id="search-input" class="search-input" placeholder="Search clips...">
+            <svg xmlns="http://www.w3.org/2000/svg" class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
         </div>
-        <div class="browser-content">
-            <div class="filter-section">
-                <input type="text" id="tagFilter" placeholder="Filter by tag...">
-            </div>
-            <div class="video-gallery" id="videoGallery">
-                <!-- Hier werden die Clips dynamisch hinzugefügt -->
-            </div>
+        <div class="filter-container" id="filter-container">
+            <button class="filter-btn active" data-category="all">All</button>
+            <!-- Categories will be added dynamically -->
         </div>
     </div>
 
-    <div id="taskbar">
-        <div class="taskbar-tabs">
-            <div class="taskbar-tab" style="background: none; padding: 0; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center;">
-                <img src="https://i.ibb.co/N2W6MnWd/icon.png" style="width: 20px; height: 20px;" alt="syntcs.com Icon">
-            </div>
-            <a href="https://syntcs.com" class="taskbar-tab">
-                <i class="fas fa-terminal" style="margin-right: 5px;"></i> Terminal | syntcs.com
-            </a>
-            <div class="taskbar-tab">
-                <i class="fa-solid fa-globe" style="margin-right: 5px;"></i> Clip-Browser
-            </div>
-        </div>
-        <div id="clock"></div>
+    <div class="clips-container" id="clips-container">
+        <div class="loading">Loading clips...</div>
     </div>
 
     <script>
-        function updateClock() {
-            const now = new Date();
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const seconds = now.getSeconds().toString().padStart(2, '0');
-            document.getElementById('clock').innerText = `${hours}:${minutes}:${seconds}`;
-        }
-        updateClock();
-        setInterval(updateClock, 1000);
-
-        document.getElementById('tagFilter').addEventListener('input', function() {
-            var filterValue = this.value.toLowerCase();
-            var videos = document.querySelectorAll('.video-container');
-            
-            videos.forEach(function(video) {
-                var tags = video.querySelectorAll('.tag');
-                var showVideo = false;
+        // Global state
+        let clipsData = [];
+        let filteredClips = [];
+        let activeCategory = 'all';
+        let searchTerm = '';
+        
+        // DOM elements
+        const clipsContainer = document.getElementById('clips-container');
+        const searchInput = document.getElementById('search-input');
+        const filterContainer = document.getElementById('filter-container');
+        
+        // JSON URL - replace with your actual JSON URL
+        const jsonUrl = 'clips.json';
+        
+        // Load clips data
+        async function loadClipsData() {
+            try {
+                const response = await fetch(jsonUrl);
                 
-                tags.forEach(function(tag) {
-                    if (tag.textContent.toLowerCase().includes(filterValue)) {
-                        showVideo = true;
+                if (!response.ok) {
+                    throw new Error(`Failed to load clips (Status: ${response.status})`);
+                }
+                
+                clipsData = await response.json();
+                
+                // Extract unique categories for filters
+                const categories = new Set();
+                clipsData.forEach(clip => {
+                    if (clip.category) {
+                        categories.add(clip.category);
                     }
                 });
                 
-                video.style.display = showVideo ? 'flex' : 'none';
-            });
-        });
-
-        fetch('clips.json')
-            .then(response => response.json())
-            .then(data => {
-                const videoGallery = document.getElementById('videoGallery');
-
-                data.forEach(clip => {
-                    var newClip = document.createElement('div');
-                    newClip.className = 'video-container';
-
-                    var iframe = document.createElement('iframe');
-                    iframe.src = 'https://www.youtube.com/embed/' + getYoutubeVideoId(clip.youtubeLink);
-                    iframe.width = '65%';
-                    iframe.height = '300';
-                    iframe.frameBorder = '0';
-                    iframe.allowFullScreen = true;
-
-                    var videoInfo = document.createElement('div');
-                    videoInfo.className = 'video-info';
-
-                    var thumbnail = document.createElement('div');
-                    thumbnail.className = 'video-thumbnail';
-                    thumbnail.style.backgroundImage = `url(https://img.youtube.com/vi/${getYoutubeVideoId(clip.youtubeLink)}/0.jpg)`;
-
-                    var videoTitle = document.createElement('h4');
-                    videoTitle.textContent = clip.title;
-
-                    var videoDescription = document.createElement('p');
-                    videoDescription.textContent = clip.description;
-
-                    var videoTags = document.createElement('div');
-                    videoTags.className = 'video-tags';
-                    clip.tags.forEach(tag => {
-                        var tagSpan = document.createElement('span');
-                        tagSpan.className = 'tag';
-                        tagSpan.textContent = tag;
-                        videoTags.appendChild(tagSpan);
-                    });
-
-                    var videoStats = document.createElement('div');
-                    videoStats.className = 'video-stats';
-                    videoStats.innerHTML = '<span>0 views</span><span>0 likes</span>';
-
-                    videoInfo.appendChild(thumbnail);
-                    videoInfo.appendChild(videoTitle);
-                    videoInfo.appendChild(videoDescription);
-                    videoInfo.appendChild(videoTags);
-                    videoInfo.appendChild(videoStats);
-
-                    newClip.appendChild(iframe);
-                    newClip.appendChild(videoInfo);
-
-                    videoGallery.appendChild(newClip);
+                // Add category filters
+                categories.forEach(category => {
+                    const btn = document.createElement('button');
+                    btn.className = 'filter-btn';
+                    btn.textContent = category;
+                    btn.dataset.category = category;
+                    btn.addEventListener('click', () => filterClips(category));
+                    filterContainer.appendChild(btn);
                 });
-            })
-            .catch(error => console.error('Fehler beim Laden der Daten:', error));
-
-        // Funktion, um die Video-ID aus einem YouTube-Link zu extrahieren
-        function getYoutubeVideoId(url) {
-            var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-            var match = url.match(regExp);
-            return (match && match[7].length == 11) ? match[7] : false;
+                
+                // Initialize with all clips
+                filteredClips = [...clipsData];
+                renderClips();
+            } catch (error) {
+                console.error('Error loading clips:', error);
+                clipsContainer.innerHTML = `
+                    <div class="error">
+                        <h3>Error Loading Clips</h3>
+                        <p>${error.message}</p>
+                        <p>Make sure your clips.json file is in the same directory as this HTML file.</p>
+                    </div>
+                `;
+            }
         }
+        
+        // Render clips to the DOM
+        function renderClips() {
+            if (filteredClips.length === 0) {
+                clipsContainer.innerHTML = `
+                    <div class="no-results">
+                        <h3>No clips found</h3>
+                        <p>Try changing your search or filter criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            filteredClips.forEach(clip => {
+                html += `
+                    <div class="clip-card">
+                        <div class="video-container">
+                            <iframe 
+                                src="https://www.youtube.com/embed/${clip.videoId}?rel=0" 
+                                title="${escapeHtml(clip.title)}"
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="clip-content">
+                            <h2 class="clip-title">${escapeHtml(clip.title)}</h2>
+                            <p class="clip-description">${escapeHtml(clip.description)}</p>
+                            <div class="clip-tags">
+                                ${clip.tags.map(tag => `<span class="clip-tag">${escapeHtml(tag)}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            clipsContainer.innerHTML = html;
+        }
+        
+        // Filter clips by category
+        function filterClips(category) {
+            activeCategory = category;
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.category === category);
+            });
+            
+            applyFilters();
+        }
+        
+        // Search clips
+        function searchClips(term) {
+            searchTerm = term.toLowerCase();
+            applyFilters();
+        }
+        
+        // Apply both filters and search
+        function applyFilters() {
+            filteredClips = clipsData.filter(clip => {
+                // Category filter
+                const categoryMatch = activeCategory === 'all' || clip.category === activeCategory;
+                
+                // Search filter
+                const searchMatch = searchTerm === '' || 
+                    clip.title.toLowerCase().includes(searchTerm) || 
+                    clip.description.toLowerCase().includes(searchTerm) ||
+                    clip.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                
+                return categoryMatch && searchMatch;
+            });
+            
+            renderClips();
+        }
+        
+        // Escape HTML to prevent XSS
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+        
+        // Event listeners
+        searchInput.addEventListener('input', e => {
+            searchClips(e.target.value);
+        });
+        
+        // Load clips on page load
+        document.addEventListener('DOMContentLoaded', loadClipsData);
     </script>
 </body>
 </html>

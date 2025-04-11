@@ -1,20 +1,86 @@
 [
   {
-    "youtubeLink": "https://youtu.be/dwcv_QRej9k",
-    "title": "MAAWS artillery",
-    "description": "Published on 25-02-26",
-    "tags": [
-      "arma3",
-      "rocket"
-    ]
+    "title": "How to Build a React App in 10 Minutes",
+    "videoId": "dGcsHMXbSOA",
+    "description": "Learn how to quickly build a React application from scratch in just 10 minutes. This tutorial covers the essential concepts and best practices.",
+    "category": "Tutorials",
+    "tags": ["React", "JavaScript", "Web Development"]
   },
   {
-    "youtubeLink": "https://youtu.be/D-KHM4HNbgg",
-    "title": "Nuke defuse",
-    "description": "Published on 2024-02-27",
-    "tags": [
-      "warzone",
-      "nuke defuse"
-    ]
+    "title": "Advanced CSS Animation Techniques",
+    "videoId": "jgw82b5Y2MU",
+    "description": "Discover advanced CSS animation techniques that will take your web designs to the next level. Learn about keyframes, transitions, and 3D transformations.",
+    "category": "Tutorials",
+    "tags": ["CSS", "Animation", "Web Design"]
+  },
+  {
+    "title": "Building a Full-Stack App with Next.js and MongoDB",
+    "videoId": "tt2k8PGm-TI",
+    "description": "In this comprehensive tutorial, we build a complete full-stack application using Next.js for the frontend and MongoDB for the database.",
+    "category": "Tutorials",
+    "tags": ["Next.js", "MongoDB", "Full-Stack"]
+  },
+  {
+    "title": "JavaScript Tips and Tricks You Should Know",
+    "videoId": "W6NZfCO5SIk",
+    "description": "Improve your JavaScript skills with these essential tips and tricks that every developer should know. Learn about modern ES6+ features and optimization techniques.",
+    "category": "Tips",
+    "tags": ["JavaScript", "ES6", "Web Development"]
+  },
+  {
+    "title": "Creating Responsive Layouts with CSS Grid",
+    "videoId": "68O6eOGAGqA",
+    "description": "Learn how to create beautiful responsive layouts using CSS Grid. This tutorial covers grid templates, areas, and responsive design techniques.",
+    "category": "Tutorials",
+    "tags": ["CSS", "Grid", "Responsive Design"]
+  },
+  {
+    "title": "TypeScript Crash Course for Beginners",
+    "videoId": "BCg4U1FzODs",
+    "description": "Get started with TypeScript in this beginner-friendly crash course. Learn about types, interfaces, and how TypeScript improves your JavaScript code.",
+    "category": "Tutorials",
+    "tags": ["TypeScript", "JavaScript", "Web Development"]
+  },
+  {
+    "title": "5 VS Code Extensions Every Developer Needs",
+    "videoId": "c5GAS_PMXDs",
+    "description": "Discover the must-have VS Code extensions that will boost your productivity and make coding more enjoyable. These tools will transform your development workflow.",
+    "category": "Tips",
+    "tags": ["VS Code", "Tools", "Productivity"]
+  },
+  {
+    "title": "Understanding Async/Await in JavaScript",
+    "videoId": "V_Kr9OSfDeU",
+    "description": "Master asynchronous JavaScript with this in-depth look at async/await. Learn how to write cleaner, more maintainable asynchronous code.",
+    "category": "Tutorials",
+    "tags": ["JavaScript", "Async", "Web Development"]
+  },
+  {
+    "title": "How to Deploy a Next.js App to Vercel",
+    "videoId": "JT2M0zqkK0",
+    "description": "Learn how to deploy your Next.js application to Vercel in minutes. This tutorial covers continuous deployment, environment variables, and domain setup.",
+    "category": "Deployment",
+    "tags": ["Next.js", "Vercel", "Deployment"]
+  },
+  {
+    "title": "Building a Dark Mode Toggle with React and CSS",
+    "videoId": "FjDo1mbkNtw",
+    "description": "Create a stylish dark mode toggle for your React application. This tutorial covers React hooks, context API, and CSS variables for theme switching.",
+    "category": "Tutorials",
+    "tags": ["React", "CSS", "Dark Mode"]
+  },
+  {
+    "title": "Git and GitHub for Beginners",
+    "videoId": "RGOj5yH7evk",
+    "description": "Learn the basics of Git and GitHub in this comprehensive tutorial for beginners. Master commits, branches, pull requests, and collaboration workflows.",
+    "category": "Tutorials",
+    "tags": ["Git", "GitHub", "Version Control"]
+  },
+  {
+    "title": "10 Performance Tips for Frontend Developers",
+    "videoId": "YJGCZCaIZkQ",
+    "description": "Optimize your web applications with these essential performance tips. Learn about lazy loading, code splitting, and other techniques to make your sites faster.",
+    "category": "Tips",
+    "tags": ["Performance", "Web Development", "Optimization"]
   }
 ]
